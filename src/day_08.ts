@@ -1,3 +1,5 @@
+import lcm from "lcm";
+
 const input: string[] = [];
 for await (const line of console) {
   input.push(line);
@@ -48,7 +50,6 @@ function part1(input: string[]): number {
   let current = "AAA";
 
   while (current !== "ZZZ") {
-    console.log(current);
     current =
       instructions[instructionIndex] === "L"
         ? nodes[current][0]
@@ -60,17 +61,11 @@ function part1(input: string[]): number {
   return steps;
 }
 
-function lcm(...arr: number[]) {
-  const gcd = (x, y) => (!y ? x : gcd(y, x % y));
-  const _lcm = (x, y) => (x * y) / gcd(x, y);
-  return [...arr].reduce((a, b) => _lcm(a, b));
-}
-
 function part2(input: string[]): number {
   const nodes = parseNodes();
   let current = Object.keys(nodes).filter((key) => key.endsWith("A"));
 
   const steps = current.map((start) => stepsTillEnd(start, "Z", nodes));
 
-  return lcm(...steps);
+  return steps.reduce((acc, val) => lcm(acc, val));
 }

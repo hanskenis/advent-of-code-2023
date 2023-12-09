@@ -7,5 +7,9 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/lcm": "^0.0.2",
+    "lcm": "^0.0.3"
   }
 }
