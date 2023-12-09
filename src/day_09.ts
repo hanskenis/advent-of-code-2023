@@ -8,60 +8,21 @@ const report = input.map((line) => line.split(" ").map((c) => Number(c)));
 console.log("Part 1: " + part1(input));
 console.log("Part 2: " + part2(input));
 
-function nextValue(history: number[]): number {
-  const data: number[][] = [];
-
-  data[0] = history;
-
-  let i = 0;
-
-  while (data[i].some((x) => x !== 0)) {
-    const differences = [];
-
-    for (let j = 1; j < data[i].length; j++) {
-      differences.push(data[i][j] - data[i][j - 1]);
+function diffs(history: number[]): number[] {
+  return history.reduce((a: number[], b, i) => {
+    if (i === history.length - 1) {
+      return a;
     }
-
-    i++;
-    data[i] = differences;
-  }
-
-  data[i].push(0);
-
-  for (let i = data.length - 1; i > 0; i--) {
-    data[i - 1].push(data[i].at(-1)! + data[i - 1].at(-1)!);
-  }
-
-  return data[0].at(-1)!;
+    return [...a, history[i + 1] - b];
+  }, []);
 }
 
-function previousValue(history: number[]): number {
-  const data: number[][] = [];
-
-  data[0] = history;
-
-  let i = 0;
-
-  while (data[i].some((x) => x !== 0)) {
-    const differences = [];
-
-    for (let j = 1; j < data[i].length; j++) {
-      differences.push(data[i][j] - data[i][j - 1]);
-    }
-
-    i++;
-    data[i] = differences;
+function nextValue(list: number[]): number {
+  if (list.every((x) => x === 0)) {
+    return 0;
   }
 
-  data[i].unshift(0);
-
-  for (let i = data.length - 1; i > 0; i--) {
-    data[i - 1].push(data[i].at(-1)! + data[i - 1].at(-1)!);
-
-    data[i - 1].unshift(data[i - 1].at(0)! - data[i].at(0)!);
-  }
-
-  return data[0][0];
+  return list.at(-1)! + nextValue(diffs(list));
 }
 
 function part1(input: string[]): number {
@@ -70,6 +31,6 @@ function part1(input: string[]): number {
 
 function part2(input: string[]): number {
   return report
-    .map((history) => previousValue(history))
+    .map((history) => nextValue(history.toReversed()))
     .reduce((a, b) => a + b, 0);
 }
